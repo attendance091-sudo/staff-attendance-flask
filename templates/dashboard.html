@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+<p>Your role: {{ user.role }}</p>
+
+{% if user.role == 'admin' %}
+    <p>Admin Panel Placeholder</p>
+    <!-- Later add admin features here -->
+{% else %}
+    <p>Staff Panel Placeholder</p>
+    <!-- Later add staff features here -->
+{% endif %}
+{% endblock %}
+{% if user.role == 'admin' %}
+    <p><strong>Admin Panel Placeholder</strong></p>
+    <!-- Admin features coming soon -->
+{% else %}
+    <p><strong>Staff Panel</strong></p>
+
+    {% set attendance = get_attendance(user.id) %}
+    <p>Today's attendance:</p>
+    {% if attendance %}
+      <ul>
+        <li>Check-in time: {{ attendance[1] if attendance[1] else 'Not checked in' }}</li>
+        <li>Check-out time: {{ attendance[2] if attendance[2] else 'Not checked out' }}</li>
+      </ul>
+    {% else %}
+      <p>No attendance recorded today.</p>
+    {% endif %}
+
+    <a href="{{ url_for('check_in') }}"><button>Check In</button></a>
+    <a href="{{ url_for('check_out') }}"><button>Check Out</button></a>
+{% endif %}
+
