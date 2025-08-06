@@ -431,7 +431,14 @@ if __name__ == "__main__":
     migrate_staff_table()      # Add active column if missing
     app.run(debug=True)
 
-    
+@app.route("/check/<staff_id>/<action>", methods=["POST"])
+def check_action(staff_id, action):
+    ...
+
+@app.route("/something-else")
+def handle_something_else():  # ✅ renamed
+    ...
+
 
 
 @app.route("/check/<staff_id>/<action>", methods=["POST"])
