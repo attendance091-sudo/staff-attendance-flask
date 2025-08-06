@@ -435,12 +435,12 @@ if __name__ == "__main__":
 
 
 @app.route("/check/<staff_id>/<action>", methods=["POST"])
-def check(staff_id, action):
+def check_action(staff_id, action):
     # Your logic here
     return "Checked!"
 
 @app.route("/check/<staff_id>/<action>", methods=["POST"])
-def check(staff_id, action):
+def check_action(staff_id, action):
     # your logic here
     return jsonify({"status": "success"})
 
