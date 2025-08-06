@@ -484,6 +484,10 @@ def toggle_staff(staff_id):
 # def check(staff_id, action):
 #     ...
 # It was causing a Flask AssertionError due to overwriting the existing `check` route.
+@app.route("/check/<staff_id>/<action>", methods=["POST"], endpoint="check_action")
+def check():
+    ...
+
 
 if __name__ == "__main__":
     init_db()                  # Initialize DB
@@ -492,7 +496,7 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 
-@app.route("/check/<staff_id>/<action>", methods=["POST"])
+@app.route("/check/<other>/<params>", methods=["POST"])
 def check(staff_id, action):
     ...
     
