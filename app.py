@@ -132,6 +132,10 @@ def init_db():
 alter_staff_table()
 
 @app.route('/')
+def home():
+    return redirect(url_for('dashboard.html'))  # Or render a homepage if you have one
+
+@app.route('/')
 def index():
     return render_template('index.html')
 
