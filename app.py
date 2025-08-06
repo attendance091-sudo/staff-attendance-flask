@@ -494,8 +494,7 @@ if __name__ == "__main__":
     migrate_db()               # Add late/overtime columns if missing
     migrate_staff_table()      # Add active column if missing
     app.run(debug=True)
-
-
+@app.route
 @app.route("/check/<other>/<params>", methods=["POST"])
 def check(staff_id, action):
     ...
