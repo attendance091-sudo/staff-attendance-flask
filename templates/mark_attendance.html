@@ -1,0 +1,19 @@
+{% include 'layout.html' %}
+
+<div class="container mt-5">
+    <h2>Mark Attendance</h2>
+    <form method="POST">
+        {% for s in staff %}
+            <div class="mb-3 row align-items-center">
+                <label class="col-sm-4 col-form-label">{{ s[1] }}</label>
+                <div class="col-sm-4">
+                    <select class="form-select" name="{{ s[0] }}">
+                        <option value="Present">Present</option>
+                        <option value="Absent">Absent</option>
+                    </select>
+                </div>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success mt-3">Submit Attendance</button>
+    </form>
+</div>

@@ -1,0 +1,31 @@
+{% include 'layout.html' %}
+
+<div class="container mt-5">
+    <h2>Attendance Records</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Staff Name</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Check-in Time</th>
+                <th>Check-out Time</th>
+                <th>Late (minutes)</th>
+                <th>Overtime (minutes)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record['name'] }}</td>
+                <td>{{ record['date'] }}</td>
+                <td>{{ record['status'] }}</td>
+                <td>{{ record['check_in_time'] or '-' }}</td>
+                <td>{{ record['check_out_time'] or '-' }}</td>
+                <td>{{ record['late'] or 0 }}</td>
+                <td>{{ record['overtime'] or 0 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

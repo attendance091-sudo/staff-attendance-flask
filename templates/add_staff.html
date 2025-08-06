@@ -1,0 +1,22 @@
+{% include 'layout.html' %}
+
+<div class="container mt-5">
+    <h2>Add New Staff</h2>
+    <form method="POST" class="mt-3">
+        <div class="mb-3">
+            <label for="name" class="form-label">Staff Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter staff name" required>
+        </div>
+        <div class="mb-3">
+            <label for="start_time" class="form-label">Start Time</label>
+            <input type="time" class="form-control" id="start_time" name="start_time">
+        </div>
+        <div class="mb-3">
+            <label for="end_time" class="form-label">End Time</label>
+            <input type="time" class="form-control" id="end_time" name="end_time">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Staff</button>
+    </form>
+
+    <a href="/" class="btn btn-link mt-3">Back</a>
+</div>

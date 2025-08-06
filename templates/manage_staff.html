@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Staff</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #999;
+            text-align: left;
+        }
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .active {
+            color: green;
+            font-weight: bold;
+        }
+        .inactive {
+            color: red;
+            font-weight: bold;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manage Staff Activation</h1>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for staff in staff_list %}
+        <tr>
+            <td>{{ staff.name }}</td>
+            <td class="{{ 'active' if staff.active else 'inactive' }}">
+                {{ 'Active' if staff.active else 'Inactive' }}
+            </td>
+            <td>
+                <form action="{{ url_for('toggle_staff', staff_id=staff.id) }}" method="POST">
+                    <button type="submit">
+                        {{ 'Deactivate' if staff.active else 'Activate' }}
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{{ url_for('index') }}">← Back to Home</a>
+</body>
+</html>

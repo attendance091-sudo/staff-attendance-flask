@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff QR Codes</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .staff-card { border: 1px solid #ccc; padding: 15px; margin: 15px 0; border-radius: 8px; }
+        .staff-name { font-weight: bold; font-size: 18px; margin-bottom: 10px; }
+        .qr-container { display: flex; gap: 40px; align-items: center; }
+        .qr-img { width: 150px; height: 150px; border: 1px solid #ddd; padding: 5px; }
+        .label { text-align: center; font-size: 14px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Staff QR Codes</h1>
+
+    {% for staff in staff_list %}
+    <div class="staff-card">
+        <div class="staff-name">{{ staff.name }}</div>
+        <div class="qr-container">
+            <div>
+                <img class="qr-img" src="{{ url_for('generate_qr', staff_id=staff.id, action='in') }}" alt="Check In QR">
+                <div class="label">Check In</div>
+            </div>
+            <div>
+                <img class="qr-img" src="{{ url_for('generate_qr', staff_id=staff.id, action='out') }}" alt="Check Out QR">
+                <div class="label">Check Out</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</body>
+</html>
