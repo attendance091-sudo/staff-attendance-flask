@@ -1,3 +1,4 @@
+from pickle import APPEND
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file, jsonify
 import sqlite3
 from datetime import date, datetime
@@ -6,17 +7,26 @@ from io import BytesIO
 from math import radians, cos, sin, asin, sqrt
 from flask import Flask, request, jsonify, render_template
 from flask import send_file
+from flask import Flask, render_template, request, send_file
+
+
+app = Flask(__name__)
 
 @app.route('/generate_qr/<staff_id>')
 def generate_qr(staff_id):
-    url = f"{request.host_url}check/{staff_id}/in"  # or out
+    url = f"{request.host_url}check/{staff_id}/in"
     qr = qrcode.make(url)
     img_io = BytesIO()
     qr.save(img_io, 'PNG')
     img_io.seek(0)
     return send_file(img_io, mimetype='image/png')
 
-@app.route('/scan_qr')
+@app.route('/show_qr/<staff_id>')
+def show_qr(staff_id):
+    return render_template('qr_display.html', staff_id=staff_id)
+
+
+@app.route('/scan_qr') # pyright: ignore[reportUndefinedVariable]
 def scan_qr():
     return render_template('qr_scanner.html')
 
