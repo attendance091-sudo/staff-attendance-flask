@@ -5,6 +5,20 @@ import qrcode
 from io import BytesIO
 from math import radians, cos, sin, asin, sqrt
 from flask import Flask, request, jsonify, render_template
+from flask import send_file
+
+@app.route('/generate_qr/<staff_id>')
+def generate_qr(staff_id):
+    url = f"{request.host_url}check/{staff_id}/in"  # or out
+    qr = qrcode.make(url)
+    img_io = BytesIO()
+    qr.save(img_io, 'PNG')
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/png')
+
+@app.route('/scan_qr')
+def scan_qr():
+    return render_template('qr_scanner.html')
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -33,18 +47,55 @@ def check_in():
     if qr_data is None or lat is None or lng is None:
         return jsonify({"message": "Missing QR data or GPS coordinates."}), 400
 
-    # Validate distance
     distance = haversine(float(lat), float(lng), OFFICE_LAT, OFFICE_LNG)
     if distance > MAX_DISTANCE_METERS:
         return jsonify({"message": "You are too far from the office to check in."}), 400
 
-    # TODO: Your actual attendance marking logic here
+    # Process the QR data to find user
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM staff WHERE id = ?", (qr_data,))
+    user = cursor.fetchone()
 
-    return jsonify({"message": f"Check-in successful for {qr_data}!"})
+    if not user:
+        return jsonify({"message": "Invalid staff ID."}), 400
+
+    today = date.today().strftime("%Y-%m-%d")
+    now = datetime.now().strftime("%H:%M:%S")
+
+    cursor.execute("SELECT * FROM attendance WHERE user_id = ? AND date = ?", (qr_data, today))
+    record = cursor.fetchone()
+
+    late_duration = None
+    cursor.execute("SELECT start_time FROM staff WHERE id = ?", (qr_data,))
+    result = cursor.fetchone()
+    if result and result['start_time']:
+        scheduled_start = datetime.strptime(result['start_time'], "%H:%M")
+        actual_in = datetime.strptime(now, "%H:%M:%S")
+        if actual_in > scheduled_start:
+            late_duration = str(actual_in - scheduled_start)
+
+    if record:
+        if record['check_in_time']:
+            return jsonify({"message": "Already checked in today."}), 400
+        else:
+            cursor.execute(
+                "UPDATE attendance SET check_in_time = ?, late = ?, status = 'Present' WHERE id = ?",
+                (now, late_duration, record['id'])
+            )
+    else:
+        cursor.execute(
+            "INSERT INTO attendance (user_id, date, check_in_time, status, late) VALUES (?, ?, ?, 'Present', ?)",
+            (qr_data, today, now, late_duration)
+        )
+
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Check-in successful!"})
 
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Replace with a real secret key
+app.secret_key = 'your_secret_key_here'
 
 DATABASE = 'staff.db'
 
@@ -455,10 +506,42 @@ def check_in():
 @app.route('/check_out', methods=['POST'])
 def check_out():
     data = request.get_json()
-    qr_code = data.get('qr_code')
-    # TODO: Validate and update attendance here
-    return jsonify({'message': f'Checked out user with QR: {qr_code}'})
+    qr_data = data.get('qr_data')
 
+    if qr_data is None:
+        return jsonify({"message": "Missing QR data."}), 400
+
+    today = date.today().strftime("%Y-%m-%d")
+    now = datetime.now().strftime("%H:%M:%S")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM attendance WHERE user_id = ? AND date = ?", (qr_data, today))
+    record = cursor.fetchone()
+
+    if not record or not record['check_in_time']:
+        return jsonify({"message": "You must check in first."}), 400
+    if record['check_out_time']:
+        return jsonify({"message": "Already checked out today."}), 400
+
+    overtime_duration = None
+    cursor.execute("SELECT end_time FROM staff WHERE id = ?", (qr_data,))
+    result = cursor.fetchone()
+    if result and result['end_time']:
+        scheduled_end = datetime.strptime(result['end_time'], "%H:%M")
+        actual_out = datetime.strptime(now, "%H:%M:%S")
+        if actual_out > scheduled_end:
+            overtime_duration = str(actual_out - scheduled_end)
+
+    cursor.execute(
+        "UPDATE attendance SET check_out_time = ?, overtime = ? WHERE id = ?",
+        (now, overtime_duration, record['id'])
+    )
+
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Check-out successful!"})
 
 
 
