@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 @app.route('/generate_qr/<staff_id>')
 def generate_qr(staff_id):
-    url = f"{request.host_url}check/{staff_id}/in"
+    url = f"{request.host_url}check/{staff_id}/in" 
     qr = qrcode.make(url)
     img_io = BytesIO()
     qr.save(img_io, 'PNG')
@@ -244,7 +244,7 @@ def attendance():
     conn.close()
     return render_template('attendance.html', staff=staff, staff_status=staff_status, today=today)
 
-@app.route('/check/<int:user_id>/<string:action>', methods=['POST'])
+@app.route('/check/<int:user_id>/<string:action>', methods=['GET', 'POST'])
 def check(user_id, action):
     if action not in ['in', 'out']:
         flash("Invalid action.", "danger")
@@ -393,7 +393,7 @@ def qr_check(staff_id, action):
 def generate_qr(staff_id, action):
     if action not in ['in', 'out']:
         return "Invalid action", 400
-    url = url_for('qr_check', staff_id=staff_id, action=action, _external=True)
+    url = url_for('qr_check', staff_id=staff_id, action='in', _external=True)
     qr_img = qrcode.make(url)
     img_io = BytesIO()
     qr_img.save(img_io, 'PNG')
