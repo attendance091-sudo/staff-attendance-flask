@@ -7,7 +7,6 @@ from math import radians, cos, sin, asin, sqrt
 from flask import Flask, request, jsonify, render_template
 
 
-
 def haversine(lat1, lon1, lat2, lon2):
     # Calculate distance between two lat/lng points in meters
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
@@ -431,25 +430,10 @@ if __name__ == "__main__":
     migrate_staff_table()      # Add active column if missing
     app.run(debug=True)
 
+
 @app.route("/check/<staff_id>/<action>", methods=["POST"])
-def check_action(staff_id, action):
+def check_staff_action(staff_id, action):
     ...
-
-@app.route("/something-else")
-def handle_something_else():  # ✅ renamed
-    ...
-
-
-
-@app.route("/check/<staff_id>/<action>", methods=["POST"])
-def check_action(staff_id, action):
-    # Your logic here
-    return "Checked!"
-
-@app.route("/check/<staff_id>/<action>", methods=["POST"])
-def check_action(staff_id, action):
-    # your logic here
-    return jsonify({"status": "success"})
 
     
 app = Flask(__name__)
