@@ -432,8 +432,9 @@ if __name__ == "__main__":
 
 
 @app.route("/check/<staff_id>/<action>", methods=["POST"])
-def check_staff_action(staff_id, action):
-    ...
+def check(staff_id, action):
+    # Your logic here
+    return "Checked!"
 
     
 app = Flask(__name__)
