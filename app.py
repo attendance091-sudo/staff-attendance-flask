@@ -131,13 +131,7 @@ def init_db():
 # Alter staff table on startup
 alter_staff_table()
 
-@app.route('/')
-def home():
-    return redirect(url_for('dashboard.html'))  # Or render a homepage if you have one
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 @app.route('/add_staff', methods=['GET', 'POST'])
 def add_staff():
